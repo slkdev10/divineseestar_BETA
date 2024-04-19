@@ -1,0 +1,50 @@
+local Players = game:GetService("Players")
+local Enabled = false;
+local uiElements = {
+	["ScreenGui"] = Instance.new("ScreenGui"),
+	["TextButton"] = Instance.new("TextButton"),
+	["UICorner"] = Instance.new("UICorner"),
+	["UIAspectRatioConstraint"] = Instance.new("UIAspectRatioConstraint")
+}
+if game:GetService("CoreGui"):FindFirstChild("CarryExGui") then 
+  game:GetService("CoreGui"):FindFirstChild("CarryExGui"):Destroy()
+end
+
+uiElements["ScreenGui"].Parent = game:GetService("CoreGui")
+uiElements["ScreenGui"].Name = "CarryExGui"
+uiElements["TextButton"].Parent = uiElements["ScreenGui"]
+uiElements["TextButton"].Position = UDim2.new(0.8986175060272217, 0, 0.5676056146621704, 0)
+uiElements["TextButton"].Size = UDim2.new(0.09308755397796631, 0, 0.145070418715477, 0)
+uiElements["TextButton"].BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+uiElements["TextButton"].BorderColor3 = Color3.fromRGB(0, 0, 0)
+uiElements["TextButton"].BorderSizePixel = 0
+uiElements["TextButton"].Font = Enum.Font.Bodoni
+uiElements["TextButton"].TextScaled = true
+uiElements["TextButton"].TextColor3 = Color3.fromRGB(0, 0, 0)
+uiElements["TextButton"].TextSize = 14
+uiElements["TextButton"].Text = "ENABLE CHECK FOR RAGDOLLED PEOPLE"
+uiElements["TextButton"].TextWrapped = true
+
+uiElements["UICorner"].Parent = uiElements["TextButton"]
+uiElements["UICorner"].CornerRadius = UDim.new(1, 0)
+
+uiElements["UIAspectRatioConstraint"].Parent = uiElements["TextButton"]
+
+uiElements["TextButton"].MouseButton1Click:Connect(
+    function()
+        Enabled = not Enabled;
+        uiElements.TextButton.Text = "ENABLE CHECK FOR RAGDOLLED PEOPLE ("..tostring(Enabled)..")"
+    end
+)
+for i, Player in pairs(game.Players:GetPlayers()) do
+    local Character = Player.Character;
+    Character:GetAttributeChangedSignal("Downed"):Connect(
+        function()
+            if Character:GetAttribute("Downed") == true and Enabled == true and game.Players.LocalPlayer.Character ~= nil then
+                if game.Players.LocalPlayer.Character:GetAttribute("Carrying") == false then
+                    game.Players.LocalPlayer.Character:PivotTo(Character:WaitForChild("Head",10).CFrame)
+                end;
+            end;
+        end
+    );
+end;
